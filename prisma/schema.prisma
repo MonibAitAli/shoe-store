@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Order {
+  id               Int      @id @default(autoincrement())
+  order_no         Int      @unique
+  customer_name    String
+  customer_phone   String
+  customer_city    String
+  customer_address String
+  notes            String?
+  items            String
+  total            Float
+  discount_id      Int?
+  discount_code    String?
+  discount_amount  Float?
+  status           String   @default("unconfirmed")
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+}
+
+model Setting {
+  id    Int    @id @default(autoincrement())
+  key   String @unique
+  value String
+}
+
+model SiteContent {
+  id      Int    @id @default(autoincrement())
+  section String
+  key     String
+  value   String
+  active  Boolean @default(true)
+
+  @@unique([section, key])
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  name      String
+  location  String
+  text      String
+  rating    Int      @default(5)
+  active    Boolean  @default(true)
+  order_pos Int      @default(0)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Discount {
+  id             Int       @id @default(autoincrement())
+  name           String
+  type           String    @default("coupon")
+  discount_type  String    @default("percentage")
+  value          Float
+  apply_to       String    @default("all")
+  apply_to_id    Int?
+  code           String?   @unique
+  min_purchase   Float?
+  usage_limit    Int?
+  used_count     Int       @default(0)
+  active         Boolean   @default(true)
+  schedule_start DateTime?
+  schedule_end   DateTime?
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @updatedAt
+}

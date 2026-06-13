@@ -1,0 +1,14 @@
+/node_modules
+/.next
+.claude/
+.agents/
+EXAMPLE_storefront/
+/out
+.env*
+!.env.example
+*.tsbuildinfo
+next-env.d.ts
+
+DESIGN.md
+AGENTS.md
+CLAUDE.md
