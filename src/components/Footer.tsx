@@ -7,14 +7,11 @@ interface FooterProps {
 export default function Footer({ content }: FooterProps) {
   const brand = content?.brand || '3bdoshoe';
   const copyright = content?.copyright || '© 2025 3bdoshoe.';
-  const linksStr = content?.links || 'Privacy,Terms,About,Contact';
-  const links = linksStr.split(',').map((s) => s.trim()).filter(Boolean);
+  const links = ['Privacy', 'Terms'];
 
   const linkTargets: Record<string, string> = {
     Privacy: '/privacy',
     Terms: '/terms',
-    About: '#story',
-    Contact: '#features',
   };
 
   return (

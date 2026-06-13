@@ -17,7 +17,7 @@ const sectionFields: Record<string, string[]> = {
   feature: ['label', 'title', 'description', 'stat_1_value', 'stat_1_label', 'stat_2_value', 'stat_2_label'],
   story: ['headline', 'quote', 'author', 'disclaimer'],
   cta: ['title', 'description', 'button_text'],
-  footer: ['brand', 'copyright', 'links'],
+  footer: ['brand', 'copyright'],
 };
 
 const sectionLabels: Record<string, string> = {

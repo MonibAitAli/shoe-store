@@ -49,7 +49,6 @@ async function main() {
     // Footer
     { section: 'footer', key: 'brand', value: '3bdoshoe' },
     { section: 'footer', key: 'copyright', value: '© 2025 3bdoshoe. Designed for elegance.' },
-    { section: 'footer', key: 'links', value: 'Privacy,Terms,About,Contact' },
   ];
 
   for (const item of content) {
