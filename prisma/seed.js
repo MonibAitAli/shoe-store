@@ -8,9 +8,9 @@ async function main() {
     { key: 'product_name', value: "Elegant Women's Shoe" },
     { key: 'product_price', value: '599.00' },
     { key: 'product_description', value: 'A beautifully crafted women\'s shoe with rich brown, gold, and reddish tones.' },
-    { key: 'hero_image_url', value: '' },
-    { key: 'feature_image_url', value: '' },
-    { key: 'sole_image_url', value: '' },
+    { key: 'hero_image', value: '' },
+    { key: 'feature_image', value: '' },
+    { key: 'sole_image', value: '' },
   ];
 
   for (const setting of defaults) {

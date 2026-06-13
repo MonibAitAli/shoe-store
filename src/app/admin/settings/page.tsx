@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Save, MessageCircle, DollarSign, Image } from 'lucide-react';
+import ImageUploader from '@/components/ImageUploader';
 
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<Record<string, string>>({});
@@ -101,44 +102,38 @@ export default function AdminSettingsPage() {
         </div>
 
         {/* Images */}
-        <div className="bg-surface-container-lowest border border-border-subtle rounded-xl p-6 space-y-4">
+        <div className="bg-surface-container-lowest border border-border-subtle rounded-xl p-6 space-y-6">
           <h2 className="font-bold text-lg text-primary flex items-center gap-2">
             <Image size={18} className="text-muted" />
             Images
           </h2>
-          <div>
-            <label className="block text-sm font-medium text-on-surface mb-1">Hero Image URL</label>
-            <input
-              type="text"
-              value={settings.hero_image_url || ''}
-              onChange={(e) => handleChange('hero_image_url', e.target.value)}
-              className="w-full border border-border-subtle rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none bg-surface-container-lowest"
-              placeholder="https://example.com/hero.jpg"
-              dir="ltr"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-on-surface mb-1">Feature Image URL</label>
-            <input
-              type="text"
-              value={settings.feature_image_url || ''}
-              onChange={(e) => handleChange('feature_image_url', e.target.value)}
-              className="w-full border border-border-subtle rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none bg-surface-container-lowest"
-              placeholder="https://example.com/feature.jpg"
-              dir="ltr"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-on-surface mb-1">Sole/Detail Image URL</label>
-            <input
-              type="text"
-              value={settings.sole_image_url || ''}
-              onChange={(e) => handleChange('sole_image_url', e.target.value)}
-              className="w-full border border-border-subtle rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none bg-surface-container-lowest"
-              placeholder="https://example.com/sole.jpg"
-              dir="ltr"
-            />
-          </div>
+          <ImageUploader
+            label="Hero Image"
+            description="Full-width background for the storefront hero section"
+            value={settings.hero_image || ''}
+            onChange={(base64) => handleChange('hero_image', base64)}
+            maxWidth={1600}
+            maxHeight={1200}
+            quality={0.85}
+          />
+          <ImageUploader
+            label="Feature Image"
+            description="Showcase image for the materials/features section"
+            value={settings.feature_image || ''}
+            onChange={(base64) => handleChange('feature_image', base64)}
+            maxWidth={800}
+            maxHeight={800}
+            quality={0.85}
+          />
+          <ImageUploader
+            label="Sole / Detail Image"
+            description="Close-up detail image for the sole or craftsmanship section"
+            value={settings.sole_image || ''}
+            onChange={(base64) => handleChange('sole_image', base64)}
+            maxWidth={800}
+            maxHeight={800}
+            quality={0.85}
+          />
         </div>
 
         {/* Save Button */}

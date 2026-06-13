@@ -8,12 +8,16 @@ interface FeatureSectionProps {
   content?: Record<string, string>;
 }
 
+function isBase64(src: string) {
+  return src.startsWith('data:');
+}
+
 export default function FeatureSection({ settings, content }: FeatureSectionProps) {
-  const [imageUrl, setImageUrl] = useState(settings.feature_image_url || '');
+  const [imageUrl, setImageUrl] = useState(settings.feature_image || settings.feature_image_url || '');
 
   useEffect(() => {
-    setImageUrl(settings.feature_image_url || '');
-  }, [settings.feature_image_url]);
+    setImageUrl(settings.feature_image || settings.feature_image_url || '');
+  }, [settings.feature_image, settings.feature_image_url]);
 
   return (
     <section className="py-[var(--spacing-section-gap-lg)] bg-surface" id="features">
@@ -21,13 +25,21 @@ export default function FeatureSection({ settings, content }: FeatureSectionProp
         <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
           <div className="rounded-lg overflow-hidden hover-scale shadow-sm">
             {imageUrl ? (
-              <Image
-                src={imageUrl}
-                alt="Shoe detail"
-                width={600}
-                height={600}
-                className="w-full h-[400px] md:h-[600px] object-cover"
-              />
+              isBase64(imageUrl) ? (
+                <img
+                  src={imageUrl}
+                  alt="Shoe detail"
+                  className="w-full h-[400px] md:h-[600px] object-cover"
+                />
+              ) : (
+                <Image
+                  src={imageUrl}
+                  alt="Shoe detail"
+                  width={600}
+                  height={600}
+                  className="w-full h-[400px] md:h-[600px] object-cover"
+                />
+              )
             ) : (
               <div className="w-full h-[400px] md:h-[600px] bg-surface-container flex items-center justify-center text-muted">
                 <span className="text-sm">Feature Image</span>

@@ -9,13 +9,17 @@ interface HeroSectionProps {
   content: Record<string, string>;
 }
 
+function isBase64(src: string) {
+  return src.startsWith('data:');
+}
+
 export default function HeroSection({ settings, content }: HeroSectionProps) {
   const router = useRouter();
-  const [imageUrl, setImageUrl] = useState(settings.hero_image_url || '');
+  const [imageUrl, setImageUrl] = useState(settings.hero_image || settings.hero_image_url || '');
 
   useEffect(() => {
-    setImageUrl(settings.hero_image_url || '');
-  }, [settings.hero_image_url]);
+    setImageUrl(settings.hero_image || settings.hero_image_url || '');
+  }, [settings.hero_image, settings.hero_image_url]);
 
   const handleShopNow = () => {
     router.push('/checkout');
@@ -25,14 +29,22 @@ export default function HeroSection({ settings, content }: HeroSectionProps) {
     <section className="relative h-screen w-full flex items-center justify-center overflow-hidden" id="shop">
       <div className="absolute inset-0 z-0">
         {imageUrl ? (
-          <Image
-            src={imageUrl}
-            alt={settings.product_name || '3bdoshoe'}
-            fill
-            className="object-cover"
-            priority
-            sizes="100vw"
-          />
+          isBase64(imageUrl) ? (
+            <img
+              src={imageUrl}
+              alt={settings.product_name || '3bdoshoe'}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <Image
+              src={imageUrl}
+              alt={settings.product_name || '3bdoshoe'}
+              fill
+              className="object-cover"
+              priority
+              sizes="100vw"
+            />
+          )
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-surface-container via-surface-container-low to-surface" />
         )}
