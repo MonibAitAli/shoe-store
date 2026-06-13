@@ -11,6 +11,15 @@ interface ContentItem {
   active: boolean;
 }
 
+const sectionFields: Record<string, string[]> = {
+  hero: ['subtext', 'button_text'],
+  social_proof: ['rating_text', 'press_logos'],
+  feature: ['label', 'title', 'description', 'stat_1_value', 'stat_1_label', 'stat_2_value', 'stat_2_label'],
+  story: ['headline', 'quote', 'author', 'disclaimer'],
+  cta: ['title', 'description', 'button_text'],
+  footer: ['brand', 'copyright', 'links'],
+};
+
 const sectionLabels: Record<string, string> = {
   hero: 'Hero Section',
   social_proof: 'Social Proof Bar',
@@ -56,6 +65,15 @@ export default function AdminContentPage() {
         data.forEach((item: ContentItem) => {
           initial[`${item.section}.${item.key}`] = item.value;
         });
+        // Pre-populate all defined fields so they're visible even when empty
+        Object.entries(sectionFields).forEach(([section, fields]) => {
+          fields.forEach((field) => {
+            const formKey = `${section}.${field}`;
+            if (initial[formKey] === undefined) {
+              initial[formKey] = '';
+            }
+          });
+        });
         setForm(initial);
       })
       .catch(() => {});
@@ -83,7 +101,7 @@ export default function AdminContentPage() {
     setSaving(false);
   };
 
-  const sections = Object.keys(sectionLabels);
+  const sections = Object.keys(sectionFields);
 
   return (
     <div className="max-w-4xl">
@@ -107,27 +125,33 @@ export default function AdminContentPage() {
 
       <div className="space-y-8">
         {sections.map((section) => {
-          const sectionItems = content.filter((c) => c.section === section);
-          if (sectionItems.length === 0) return null;
+          const fields = sectionFields[section];
+          const existingContent = content.filter((c) => c.section === section);
+          const hasData = existingContent.length > 0;
 
           return (
             <div key={section} className="bg-surface-container-lowest border border-border-subtle rounded-xl p-6 space-y-4">
               <h2 className="font-bold text-lg text-primary border-b border-border-subtle pb-3">
                 {sectionLabels[section]}
+                {!hasData && (
+                  <span className="ml-2 text-xs font-normal text-muted">(new content)</span>
+                )}
               </h2>
-              {sectionItems.map((item) => {
-                const formKey = `${item.section}.${item.key}`;
-                const isQuote = item.key === 'quote';
-                const isLongText = ['description', 'quote', 'copyright', 'disclaimer'].includes(item.key);
+              {fields.map((field) => {
+                const existing = existingContent.find((c) => c.key === field);
+                const formKey = `${section}.${field}`;
+                const currentValue = form[formKey] || '';
+                const isQuote = field === 'quote';
+                const isLongText = ['description', 'quote', 'copyright', 'disclaimer'].includes(field);
 
                 return (
-                  <div key={item.id}>
+                  <div key={field}>
                     <label className="block text-sm font-medium text-on-surface mb-1">
-                      {fieldLabels[item.key] || item.key}
+                      {fieldLabels[field] || field}
                     </label>
                     {isLongText ? (
                       <textarea
-                        value={form[formKey] || ''}
+                        value={currentValue}
                         onChange={(e) => handleChange(formKey, e.target.value)}
                         rows={isQuote ? 4 : 3}
                         className="w-full border border-border-subtle rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none bg-surface-container-lowest resize-none"
@@ -135,7 +159,7 @@ export default function AdminContentPage() {
                     ) : (
                       <input
                         type="text"
-                        value={form[formKey] || ''}
+                        value={currentValue}
                         onChange={(e) => handleChange(formKey, e.target.value)}
                         className="w-full border border-border-subtle rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none bg-surface-container-lowest"
                       />
