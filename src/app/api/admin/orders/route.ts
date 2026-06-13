@@ -35,3 +35,29 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: 'Failed to update order' }, { status: 500 });
   }
 }
+
+export async function DELETE(request: Request) {
+  try {
+    const { id } = await request.json();
+    if (!id) {
+      return NextResponse.json({ error: 'Missing order id' }, { status: 400 });
+    }
+
+    const order = await prisma.order.findUnique({ where: { id } });
+    if (!order) {
+      return NextResponse.json({ error: 'Order not found' }, { status: 404 });
+    }
+
+    if (order.status !== 'cancelled' && order.status !== 'delivered') {
+      return NextResponse.json(
+        { error: 'Only cancelled or delivered orders can be deleted' },
+        { status: 400 }
+      );
+    }
+
+    await prisma.order.delete({ where: { id } });
+    return NextResponse.json({ success: true });
+  } catch {
+    return NextResponse.json({ error: 'Failed to delete order' }, { status: 500 });
+  }
+}

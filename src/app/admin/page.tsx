@@ -27,7 +27,12 @@ export default function AdminDashboardPage() {
   }, []);
 
   const totalOrders = orders.length;
-  const totalRevenue = orders.reduce((sum, o) => sum + Number(o.total), 0);
+  const earnings = orders
+    .filter((o) => o.status === 'delivered')
+    .reduce((sum, o) => sum + Number(o.total), 0);
+  const potentialEarnings = orders
+    .filter((o) => o.status === 'confirmed' || o.status === 'shipped')
+    .reduce((sum, o) => sum + Number(o.total), 0);
   const unconfirmed = orders.filter((o) => o.status === 'unconfirmed').length;
   const recentOrders = orders.slice(0, 5);
 
@@ -49,7 +54,7 @@ export default function AdminDashboardPage() {
       <h1 className="text-2xl font-bold text-primary mb-6">Dashboard</h1>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div className="bg-surface-container-lowest border border-border-subtle rounded-xl p-6">
           <div className="flex items-center gap-3 mb-2">
             <ShoppingCart size={20} className="text-secondary" />
@@ -60,9 +65,18 @@ export default function AdminDashboardPage() {
         <div className="bg-surface-container-lowest border border-border-subtle rounded-xl p-6">
           <div className="flex items-center gap-3 mb-2">
             <TrendingUp size={20} className="text-green-600" />
-            <span className="text-sm font-medium text-muted">Revenue</span>
+            <span className="text-sm font-medium text-muted">Earnings</span>
           </div>
-          <p className="text-3xl font-bold text-primary">{formatPrice(totalRevenue)}</p>
+          <p className="text-3xl font-bold text-primary">{formatPrice(earnings)}</p>
+          <p className="text-xs text-muted mt-1">Delivered only</p>
+        </div>
+        <div className="bg-surface-container-lowest border border-border-subtle rounded-xl p-6">
+          <div className="flex items-center gap-3 mb-2">
+            <TrendingUp size={20} className="text-blue-600" />
+            <span className="text-sm font-medium text-muted">Potential Earnings</span>
+          </div>
+          <p className="text-3xl font-bold text-primary">{formatPrice(potentialEarnings)}</p>
+          <p className="text-xs text-muted mt-1">Confirmed + Shipped</p>
         </div>
         <div className="bg-surface-container-lowest border border-border-subtle rounded-xl p-6">
           <div className="flex items-center gap-3 mb-2">

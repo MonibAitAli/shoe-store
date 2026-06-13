@@ -40,6 +40,18 @@ export default function AdminOrdersPage() {
     load();
   };
 
+  const handleDelete = async (id: number, status: string) => {
+    if (status !== 'cancelled' && status !== 'delivered') return;
+    if (!confirm(`Delete this ${status} order? This cannot be undone.`)) return;
+
+    await fetch('/api/admin/orders', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    });
+    load();
+  };
+
   const statusColor = (status: string) => {
     switch (status) {
       case 'unconfirmed': return 'bg-yellow-100 text-yellow-800';
@@ -95,15 +107,28 @@ export default function AdminOrdersPage() {
                   {new Date(order.created_at).toLocaleDateString()}
                 </td>
                 <td className="p-3">
-                  <select
-                    value={order.status}
-                    onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                    className="border border-border-subtle rounded-lg px-2 py-1.5 text-xs bg-surface-container-lowest"
-                  >
-                    {statusOptions.map((s) => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={order.status}
+                      onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                      className="border border-border-subtle rounded-lg px-2 py-1.5 text-xs bg-surface-container-lowest"
+                    >
+                      {statusOptions.map((s) => (
+                        <option key={s} value={s}>{s}</option>
+                      ))}
+                    </select>
+                    {(order.status === 'cancelled' || order.status === 'delivered') && (
+                      <button
+                        onClick={() => handleDelete(order.id, order.status)}
+                        className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                        title={`Delete ${order.status} order`}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                        </svg>
+                      </button>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}

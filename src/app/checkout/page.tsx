@@ -42,6 +42,9 @@ export default function CheckoutPage() {
 
     setSubmitting(true);
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15_000);
+
     try {
       const res = await fetch('/api/orders', {
         method: 'POST',
@@ -55,7 +58,17 @@ export default function CheckoutPage() {
           discountAmount: null,
           finalTotal: total,
         }),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => null);
+        alert(errData?.error || `Server error (${res.status})`);
+        setSubmitting(false);
+        return;
+      }
 
       const order = await res.json();
 
@@ -85,8 +98,13 @@ export default function CheckoutPage() {
       );
 
       router.push(`/order-confirmed/${order.orderNo}?phone=${encodeURIComponent(whatsappNumber)}&msg=${encodeURIComponent(msg)}`);
-    } catch {
-      alert('Error creating order');
+    } catch (err: unknown) {
+      clearTimeout(timeoutId);
+      if (err instanceof DOMException && err.name === 'AbortError') {
+        alert('Request timed out. Please check your connection and try again.');
+      } else {
+        alert('Error creating order. Please try again.');
+      }
       setSubmitting(false);
     }
   };
